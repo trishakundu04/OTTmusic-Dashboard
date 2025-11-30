@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Sales Dashboard</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- DataTables CDN -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<style>
+/* --- Global Styles --- */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  scroll-behavior: smooth;
+}
+
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+header {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  color: #00796B;
+  padding: 30px;
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  margin-bottom: 20px;
+}
+
+nav {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+nav a {
+  display: block;
+  color: #004D40;
+  text-align: center;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background-color: #00796B;
+  transition: 0.3s;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+nav a:hover {
+  color: #00796B;
+  transform: scale(1.1);
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+h2 {
+  margin-top: 40px;
+  color: #004D40;
+  font-weight: 600;
+  font-size: 1.8rem;
+  letter-spacing: 0.5px;
+  border-left: 5px solid #00796B;
+  padding-left: 12px;
+  text-transform: capitalize;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px auto 40px auto;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  width: 40%;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+
+.glass-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 40px 0 rgba(0,0,0,0.2);
+}
+
+table.dataTable {
+  width: 90% !important;
+  margin: 20px auto 40px auto;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  padding: 10px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+
+.fade-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+</style>
+</head>
+<body>
+
+<header>Music Sales Dashboard</header>
+
+<nav>
+  <a href="#topSongs">Top Songs</a>
+  <a href="#revenueBreakdown">Revenue Breakdown</a>
+  <a href="#streamsByLanguage">Streams by Language</a>
+  <a href="#revenueByLabel">Revenue by Label</a>
+  <a href="#streamTypeBreakdown">Stream Type Breakdown</a>
+  <a href="#songTableSection">Song Table</a>
+  <a href="#albumTableSection">Album Table</a>
+  <a href="#labelTableSection">Label Table</a>
+</nav>
+
+<div class="container">
+  <h2 id="topSongs">Top Songs by Streams</h2>
+  <div class="glass-card">
+    <canvas id="topSongsChart" height="200"></canvas>
+  </div>
+
+  <h2 id="revenueBreakdown">Revenue Breakdown per Song</h2>
+  <div class="glass-card">
+    <canvas id="revenueBreakdownChart" height="200"></canvas>
+  </div>
+
+  <h2 id="streamsByLanguage">Streams by Language</h2>
+  <div class="glass-card">
+    <canvas id="streamsByLanguageChart" height="200"></canvas>
+  </div>
+
+  <h2 id="revenueByLabel">Revenue by Label</h2>
+  <div class="glass-card">
+    <canvas id="revenueByLabelChart" height="200"></canvas>
+  </div>
+
+  <h2 id="streamTypeBreakdown">Stream Type Breakdown</h2>
+  <div class="glass-card">
+    <canvas id="streamTypeBreakdownChart" height="200"></canvas>
+  </div>
+
+  <h2 id="songTableSection">Song Performance Table</h2>
+  <table id="songTable" class="display"></table>
+
+  <h2 id="albumTableSection">Album Summary Table</h2>
+  <table id="albumTable" class="display"></table>
+
+  <h2 id="labelTableSection">Label Summary Table</h2>
+  <table id="labelTable" class="display"></table>
+</div>
+
+<script>
+fetch('dashboard_data.json')
+  .then(res => res.json())
+  .then(data => {
+    initCharts(data);
+    initTables(data);
+    addScrollAnimation();
+  })
+  .catch(err => console.error("Error loading JSON:", err));
+
+function initCharts(data) {
+  const topSongs = data.sort((a,b)=>b.total-a.total).slice(0,10);
+
+  // Top Songs Chart (Animated)
+  new Chart(document.getElementById('topSongsChart'), {
+    type: 'bar',
+    data: { labels: topSongs.map(d=>d.song_name), datasets: [{ label:'Total Streams', data:topSongs.map(d=>d.total), backgroundColor:'#00796B' }] },
+    options:{ responsive:true, plugins:{ legend:{ display:false } }, animation:{ duration:1000, easing:'easeOutBounce' } }
+  });
+
+  // Revenue Breakdown Stacked Bar
+  new Chart(document.getElementById('revenueBreakdownChart'), {
+    type: 'bar',
+    data: { labels: topSongs.map(d=>d.song_name), datasets:[
+      { label:'Income', data:topSongs.map(d=>d.income), backgroundColor:'#2196F3' },
+      { label:'Admin Expense', data:topSongs.map(d=>d.admin_exp), backgroundColor:'#FFC107' },
+      { label:'Royalty', data:topSongs.map(d=>d.royality), backgroundColor:'#F44336' }
+    ]},
+    options:{ responsive:true, plugins:{ legend:{ position:'top' } }, scales:{ x:{ stacked:true }, y:{ stacked:true } }, animation:{ duration:1000, easing:'easeOutBounce' } }
+  });
+
+  // Streams by Language (Doughnut)
+  const langMap={};
+  data.forEach(d=>{ langMap[d.language]=(langMap[d.language]||0)+d.total; });
+  new Chart(document.getElementById('streamsByLanguageChart'), {
+    type:'doughnut',
+    data:{ labels:Object.keys(langMap), datasets:[{ data:Object.values(langMap), backgroundColor:['#4CAF50','#2196F3','#FFC107','#F44336','#9C27B0'] }] },
+    options:{ responsive:true, animation:{ animateScale:true, duration:1000 } }
+  });
+
+  // Revenue by Label (Pie)
+  const labelMap={};
+  data.forEach(d=>{ labelMap[d.label]=(labelMap[d.label]||0)+d.income; });
+  new Chart(document.getElementById('revenueByLabelChart'), {
+    type:'pie',
+    data:{ labels:Object.keys(labelMap), datasets:[{ data:Object.values(labelMap), backgroundColor:['#4CAF50','#2196F3','#FFC107','#F44336','#9C27B0'] }] },
+    options:{ responsive:true, animation:{ animateScale:true, duration:1000 } }
+  });
+
+  // Stream Type Breakdown (Stacked Bar)
+  const topSongsStreams = data.sort((a,b)=>(b.total||0)-(a.total||0)).slice(0,10);
+  new Chart(document.getElementById('streamTypeBreakdownChart'), {
+    type:'bar',
+    data:{
+      labels: topSongsStreams.map(d=>d.song_name),
+      datasets:[
+        { label:'Ad Supported Streams', data:topSongsStreams.map(d=>d.ad_supported_streams||0), backgroundColor:'#4CAF50' },
+        { label:'Subscription Streams', data:topSongsStreams.map(d=>d.subscription_streams||0), backgroundColor:'#2196F3' },
+        { label:'Jio Trial Streams', data:topSongsStreams.map(d=>d.jio_trial_streams||0), backgroundColor:'#FFC107' }
+      ]
+    },
+    options:{ responsive:true, plugins:{ legend:{ position:'top' } }, scales:{ x:{ stacked:true }, y:{ stacked:true } }, animation:{ duration:1000, easing:'easeOutBounce' } }
+  });
+}
+
+function initTables(data) {
+  $('#songTable').DataTable({
+    data:data,
+    columns:[
+      { title:"Song Name", data:"song_name" },
+      { title:"Album Name", data:"album_name" },
+      { title:"Artist", data:"artist" },
+      { title:"Total Streams", data:"total" },
+      { title:"Income", data:"income" },
+      { title:"Admin Expense", data:"admin_exp" },
+      { title:"Royalty", data:"royality" }
+    ],
+    pageLength:10
+  });
+
+  const albumMap={};
+  data.forEach(d=>{
+    if(!albumMap[d.album_name]) albumMap[d.album_name]={ album_name:d.album_name, artist:d.artist, total:0, income:0 };
+    albumMap[d.album_name].total+=d.total;
+    albumMap[d.album_name].income+=d.income;
+  });
+  $('#albumTable').DataTable({
+    data:Object.values(albumMap),
+    columns:[
+      { title:"Album Name", data:"album_name" },
+      { title:"Artist", data:"artist" },
+      { title:"Total Streams", data:"total" },
+      { title:"Income", data:"income" }
+    ],
+    pageLength:10
+  });
+
+  const labelMap={};
+  data.forEach(d=>{
+    if(!labelMap[d.label]) labelMap[d.label]={ label:d.label, total:0, income:0 };
+    labelMap[d.label].total+=d.total;
+    labelMap[d.label].income+=d.income;
+  });
+  $('#labelTable').DataTable({
+    data:Object.values(labelMap),
+    columns:[
+      { title:"Label", data:"label" },
+      { title:"Total Streams", data:"total" },
+      { title:"Income", data:"income" }
+    ],
+    pageLength:10
+  });
+}
+
+// Fade-in animations
+function addScrollAnimation() {
+  const elements=document.querySelectorAll('h2, .glass-card, table.dataTable');
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) entry.target.classList.add('fade-in');
+    });
+  }, { threshold:0.2 });
+  elements.forEach(el=>observer.observe(el));
+}
+
+// Smooth scroll with navbar offset
+const navLinks=document.querySelectorAll('nav a');
+navLinks.forEach(link=>{
+  link.addEventListener('click', function(e){
+    e.preventDefault();
+    const targetId=this.getAttribute('href').substring(1);
+    const targetEl=document.getElementById(targetId);
+    const offset=80;
+    const bodyRect=document.body.getBoundingClientRect().top;
+    const elementRect=targetEl.getBoundingClientRect().top;
+    const elementPosition=elementRect-bodyRect;
+    const offsetPosition=elementPosition-offset;
+    window.scrollTo({ top: offsetPosition, behavior:'smooth' });
+  });
+});
+</script>
+</body>
+</html>
