@@ -105,47 +105,66 @@ h2 {
   letter-spacing: 0.5px;
   border-left: 5px solid #00796B;
   padding-left: 12px;
-  text-transform: capitalize;
+ 
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+}
+  .charts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  border-radius: 18px;
+  padding: 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+
+  flex: 1;
+  min-width: 320px;
+  max-width: 48%;
+  height: 350px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+}
+.glass-card:hover {
+  transform: scale(1.02);
+ 
+}
+
+table.dataTable {
+  width: 95% !important;
+  margin: 15px auto 30px auto;
+  border-radius: 12px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+
   opacity: 0;
   transform: translateY(30px);
   transition: all 0.8s ease;
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
-  padding: 20px;
-  margin: 20px auto 40px auto;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-  width: 40%;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 1s ease;
-}
-
-.glass-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 40px 0 rgba(0,0,0,0.2);
-}
-
-table.dataTable {
-  width: 90% !important;
-  margin: 20px auto 40px auto;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(15px);
-  padding: 10px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 1s ease;
-}
-
 .fade-in {
   opacity: 1 !important;
   transform: translateY(0) !important;
+}
+  @media (max-width: 900px) {
+  .glass-card {
+    max-width: 100%;
+    height: 300px;
+  }
 }
 </style>
 </head>
@@ -165,30 +184,26 @@ table.dataTable {
 </nav>
 
 <div class="container">
-  <h2 id="topSongs">Top Songs by Streams</h2>
-  <div class="glass-card">
-    <canvas id="topSongsChart" height="200"></canvas>
+ <!-- ROW 1 -->
+  <h2 id="topSongs">Top Songs & Revenue Breakdown</h2>
+  <div class="charts-row">
+    <div class="glass-card"><canvas id="topSongsChart"></canvas></div>
+    <div class="glass-card"><canvas id="revenueBreakdownChart"></canvas></div>
   </div>
 
-  <h2 id="revenueBreakdown">Revenue Breakdown per Song</h2>
-  <div class="glass-card">
-    <canvas id="revenueBreakdownChart" height="200"></canvas>
+  <!-- ROW 2 -->
+  <h2 id="streamsByLanguage">Streams by Language & Revenue by Label</h2>
+  <div class="charts-row">
+    <div class="glass-card"><canvas id="streamsByLanguageChart"></canvas></div>
+    <div class="glass-card"><canvas id="revenueByLabelChart"></canvas></div>
   </div>
 
-  <h2 id="streamsByLanguage">Streams by Language</h2>
-  <div class="glass-card">
-    <canvas id="streamsByLanguageChart" height="200"></canvas>
-  </div>
-
-  <h2 id="revenueByLabel">Revenue by Label</h2>
-  <div class="glass-card">
-    <canvas id="revenueByLabelChart" height="200"></canvas>
-  </div>
-
+  <!-- ROW 3 -->
   <h2 id="streamTypeBreakdown">Stream Type Breakdown</h2>
-  <div class="glass-card">
-    <canvas id="streamTypeBreakdownChart" height="200"></canvas>
+  <div class="charts-row">
+    <div class="glass-card"><canvas id="streamTypeBreakdownChart"></canvas></div>
   </div>
+
 
   <h2 id="songTableSection">Song Performance Table</h2>
   <table id="songTable" class="display"></table>
@@ -343,3 +358,4 @@ navLinks.forEach(link=>{
 </script>
 </body>
 </html>
+
